@@ -4,10 +4,13 @@
 step1: 
      `pip install -r requirements.txt` 
 
-由于pymysql这个库连接inception的时候会不兼容智能从 源码当中进行修改
 
-     ```shell
-1、找到pymysql的源码路径 修改connections.py文件
+
+~~~shell
+ ```
+ 由于pymysql这个库连接inception的时候会不兼容智能从 源码当中进行修改、
+ 
+ 1、找到pymysql的源码路径 修改connections.py文件
 
 vim connections.py
 
@@ -37,8 +40,8 @@ if self._result and (self._result.has_next or not self._result.warning_count):
 改成 
 if self._result:
 	return
+~~~
 
-     ```
 
 
 
