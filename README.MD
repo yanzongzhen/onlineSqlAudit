@@ -3,6 +3,45 @@
 环境  python3.6  django  mysql inception
 step1: 
      `pip install -r requirements.txt` 
+
+由于pymysql这个库连接inception的时候会不兼容智能从 源码当中进行修改
+
+     ```shell
+1、找到pymysql的源码路径 修改connections.py文件
+
+vim connections.py
+
+def _request_authentication(self):
+        # https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeResponse
+        if int(self.server_version.split('.', 1)[0]) >= 5:
+            self.client_flag |= CLIENT.MULTI_RESULTS
+修改为
+def _request_authentication(self):
+        # https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeResponse
+        try:
+            if int(self.server_version.split('.', 1)[0]) >= 5:
+                self.client_flag |= CLIENT.MULTI_RESULTS
+        except:
+            if self.server_version.split('.', 1)[0] == 'Inception2':
+                self.client_flag |= CLIENT.MULTI_RESULTS
+                
+
+2、 查找 pymysql 源码修改 cursors.py文件
+
+vim cursors.py
+
+将这个代码
+if self._result and (self._result.has_next or not self._result.warning_count):
+    return
+
+改成 
+if self._result:
+	return
+
+     ```
+
+
+
 step2: 
     安装inception 并且启动inception  
 
@@ -94,4 +133,6 @@ step 5 启动
  ```shell
 python manage.py runserver 0.0.0.0:8000
  ```
+
+
 
